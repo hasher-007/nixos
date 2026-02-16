@@ -14,7 +14,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "ei"; # Define your hostname.
+  networking.hostName = "eiko"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -43,20 +43,41 @@
   };
 
   # Enable the X11 windowing system.
-  services.xserver = {
-    enable = true;
-    xkb = {
-      variant = "";
-      layout = "us";
-    };
-  };
+  services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
+  services.gnome.core-apps.enable = false;
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
+  programs.dconf.profiles.user.databases = [
+    {
+      lockAll = true;
+      settings = {
+        "org/gnome/desktop/interface" = {
+          accent-color = "purple";
+        };
+        "org/gnome/desktop/input-sources" = {
+          xkb-options = [ "caps:swapescape" ];
+        };
+      };
+    }
+  ];
+
+  environment.gnome.excludePackages = with pkgs; [
+    gnome-tour
+  ];
+
+  environment.variables = {
+      XCURSOR_SIZE = 32;
+      XCURSOR_THEME = "macOS";
+  };
+
+  # Configure keymap in X11
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "";
+  };
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -79,11 +100,16 @@
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.therootdaemon = {
-    isNormalUser = true;
-    extraGroups = [ "networkmanager" "wheel" ];
     shell = pkgs.zsh;
+    isNormalUser = true;
+    description = "therootdaemon";
+    extraGroups = [ "networkmanager" "wheel" ];
+    packages = with pkgs; [
+    #  thunderbird
+    ];
   };
 
+  # Install firefox.
   programs.firefox.enable = true;
   programs.zsh = {
     enable = true;
@@ -98,16 +124,30 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    neovim
-    alacritty
-    git
     zsh
+    neovim
+    python313
+    python313Packages.pynvim
+    fzf
+    ripgrep
     oh-my-posh
     tldr
     tree
     tmux
-    bun
-    nodejs_24
+    lua
+    luarocks
+    stylua
+    lua-language-server
+    wezterm
+    git
+    nautilus
+    gnome-tweaks
+    go
+    gofumpt
+    gopls
+    nodejs
+    apple-cursor
+    papirus-icon-theme
   ];
   
   fonts.packages = with pkgs; [
@@ -138,5 +178,6 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.11";
+  system.stateVersion = "25.11"; # Did you read the comment?
+
 }
