@@ -1,5 +1,5 @@
 {
-	description = "therootdaemon's nixos configuration";
+	description = "hasher's nixos configuration";
 	inputs = {
 		nixpkgs.url = "nixpkgs/nixos-25.11";
 		home-manager = {
