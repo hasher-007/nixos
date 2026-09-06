@@ -12,7 +12,7 @@
 		nixosConfigurations.eiko = nixpkgs.lib.nixosSystem {
 			system = "x84_64-linux";
 			modules = [
-				./configuration.nix
+				./hosts/eiko/configuration.nix
 				home-manager.nixosModules.home-manager
 				{
 					home-manager = {
